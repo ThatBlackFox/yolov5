@@ -70,7 +70,7 @@ def autopad(k, p=None, d=1):
     return p
 
 class ColorAttention(nn.Module):
-    def __init__(self, channels):
+    def __init__(self, channels, *args, **kwargs):  # Accept additional arguments
         super(ColorAttention, self).__init__()
         self.conv1 = nn.Conv2d(channels, channels // 2, 1)  # Reduce channels
         self.relu = nn.ReLU()
@@ -81,7 +81,8 @@ class ColorAttention(nn.Module):
         # Spatial mean of feature maps
         color_mean = x.mean(dim=[2, 3], keepdim=True)  # (B, C, 1, 1)
         attention = self.sigmoid(self.conv2(self.relu(self.conv1(color_mean))))
-        return x * attention
+        return x * attention  # Apply color attention
+
 
 class Conv(nn.Module):
     """Applies a convolution, batch normalization, and activation function to an input tensor in a neural network."""

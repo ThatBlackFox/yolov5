@@ -81,7 +81,7 @@ class ColorAttention(nn.Module):
         # Spatial mean of feature maps
         color_mean = x.mean(dim=[2, 3], keepdim=True)  # (B, C, 1, 1)
         attention = self.sigmoid(self.conv2(self.relu(self.conv1(color_mean))))
-        return x * attention  # Apply color attention
+        return x * attention + x  # Apply color attention
 
 
 class Conv(nn.Module):

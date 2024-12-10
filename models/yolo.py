@@ -14,7 +14,6 @@ import platform
 import sys
 from copy import deepcopy
 from pathlib import Path
-from coloratn import ColorAttention
 
 import torch
 import torch.nn as nn

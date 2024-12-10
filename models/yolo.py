@@ -14,6 +14,7 @@ import platform
 import sys
 from copy import deepcopy
 from pathlib import Path
+from coloratn import ColorAttention
 
 import torch
 import torch.nn as nn
@@ -48,6 +49,7 @@ from models.common import (
     GhostBottleneck,
     GhostConv,
     Proto,
+    ColorAttention
 )
 from models.experimental import MixConv2d
 from utils.autoanchor import check_anchor_order
@@ -414,6 +416,7 @@ def parse_model(d, ch):
             CrossConv,
             BottleneckCSP,
             C3,
+            ColorAttention,
             C3TR,
             C3SPP,
             C3Ghost,

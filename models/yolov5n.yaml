@@ -45,4 +45,4 @@ head:
   - [-1, 3, C3, [1024, False]]  # 23
 
   # Detection head with attention flag, attention parameter passed
-  - [[17, 20, 23], 1, Detect, [nc, anchors, attention=True]]  # Set attention flag here
+  - [[17, 20, 23], 1, Detect, [nc, anchors]]  # Set attention flag here

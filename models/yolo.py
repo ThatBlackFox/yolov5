@@ -48,6 +48,7 @@ from models.common import (
     GhostBottleneck,
     GhostConv,
     Proto,
+    SEBlock,
 )
 from models.experimental import MixConv2d
 from utils.autoanchor import check_anchor_order
@@ -76,7 +77,7 @@ class Detect(nn.Module):
     dynamic = False  # force grid reconstruction
     export = False  # export mode
 
-    def __init__(self, nc=80, anchors=(), ch=(), inplace=True):
+    def __init__(self, nc=80, anchors=(), ch=(), inplace=True, attention=False):
         """Initializes YOLOv5 detection layer with specified classes, anchors, channels, and inplace operations."""
         super().__init__()
         self.nc = nc  # number of classes
@@ -88,12 +89,17 @@ class Detect(nn.Module):
         self.register_buffer("anchors", torch.tensor(anchors).float().view(self.nl, -1, 2))  # shape(nl,na,2)
         self.m = nn.ModuleList(nn.Conv2d(x, self.no * self.na, 1) for x in ch)  # output conv
         self.inplace = inplace  # use inplace ops (e.g. slice assignment)
-
+        self.attention = SEBlock(512) if attention else None
     def forward(self, x):
         """Processes input through YOLOv5 layers, altering shape for detection: `x(bs, 3, ny, nx, 85)`."""
         z = []  # inference output
         for i in range(self.nl):
             x[i] = self.m[i](x[i])  # conv
+            
+            # Apply attention mechanism if it exists and is set
+            if hasattr(self, 'attention') and self.attention is not None:
+                x[i] = self.attention(x[i])  # Apply attention here
+            
             bs, _, ny, nx = x[i].shape  # x(bs,255,20,20) to x(bs,3,20,20,85)
             x[i] = x[i].view(bs, self.na, self.no, ny, nx).permute(0, 1, 3, 4, 2).contiguous()
 
